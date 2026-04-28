@@ -1,57 +1,86 @@
-# Full-Stack Next.js Blogging Platform
+# 🖋️ Inkwell
 
-A complete, feature-rich blogging platform built with modern web technologies, scalable auth, database infrastructure, and Google's powerful Gemini AI for automatic summarization.
+**Inkwell** is a modern, AI-powered blogging platform designed for storytellers and editorial enthusiasts. Built with the **Next.js 16 (Turbopack)** and **Supabase**, it combines a sleek, minimalist aesthetic with powerful features like AI-driven summaries and rich-text editing.
 
-## 1. Project Overview
-This project provides a robust solution for a blogging platform. It supports full user authentication with defined roles (`author`, `viewer`, `admin`), rich post management, AI-generated summaries, and an interactive commenting system. Everything is seamlessly wrapped in a high-performance Next.js 14/15 application.
+---
 
-## 2. Tech Stack
-- **Framework**: [Next.js (App Router)](https://nextjs.org/)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
+## ✨ Features
+
+### 📖 For Readers
+- **Editorial Aesthetic**: A clean, typography-focused design optimized for reading.
+- **AI Summaries**: Get the gist of any story instantly with Gemini-powered AI summaries.
+- **Global Search**: Find stories easily with a high-performance search engine.
+- **Responsive Design**: Seamless experience across mobile, tablet, and desktop.
+- **Interactive Comments**: Engage with authors through a real-time discussion system.
+
+### ✍️ For Authors
+- **Rich Text Editor**: A professional-grade editor built with Tiptap, supporting headings, formatting, and more.
+- **Image Management**: Integrated Supabase Storage for high-quality featured images.
+- **Story Dashboard**: A dedicated profile page to manage your published stories, drafts, and edits.
+- **Automated Metadata**: AI automatically generates summaries for your posts to improve SEO and engagement.
+- **Role-Based Access**: Specialized permissions for Viewers, Authors, and Admins.
+
+---
+
+## 🚀 Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router & Turbopack)
+- **Database & Auth**: [Supabase](https://supabase.com/)
+- **AI Engine**: [Google Gemini 1.5 Flash](https://ai.google.dev/)
+- **Editor**: [Tiptap](https://tiptap.dev/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Database + Auth + Storage**: [Supabase](https://supabase.com/) (PostgreSQL + RLS)
-- **AI Integrations**: [Google Gemini API (@google/generative-ai)](https://ai.google.dev/)
 - **Icons**: [Lucide React](https://lucide.dev/)
 
-## 3. Local Setup Instructions
-Follow these steps to get the project running on your local machine:
+---
 
-1. **Clone the repository** (if pushed to Github).
-2. **Install Dependencies**: Execute `npm install` inside the project folder.
-3. **Set Up the Environment Variables**:
-   In the root of the project, edit the existing `.env.local` file and replace the placeholder text with your actual keys from Supabase and Google MakerSuite:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-   GEMINI_API_KEY=your_google_gemini_api_key
-   ```
-4. **Run the Development Server**: Launch it using `npm run dev` and navigate to `http://localhost:3000`.
+## 🛠️ Getting Started
 
-## 4. Supabase Setup Steps
-Before starting the app, you must set up the database using Supabase. A SQL script `supabase-setup.sql` has been automatically prepared.
-1. Create a new Supabase Project.
-2. In the left-hand menu, navigate to the **SQL Editor**.
-3. Open `supabase-setup.sql` and copy its entire content into the SQL Editor, then click **Run**. This will create the `users`, `posts`, and `comments` tables, configure RLS policies, and establish the user trigger.
-4. Navigate to **Storage** and create a newly-named **public** bucket called `post-images` (ensure it is marked Public).
+### 1. Clone the repository
+```bash
+git clone https://github.com/kushal1061/Blog_post.git
+cd Blog_post
+```
 
-## 5. Deployment Steps
-1. Push your local codebase to a new **GitHub repository**.
-2. Create an account or log in to **Vercel** (`vercel.com`).
-3. Import your GitHub repository to Vercel.
-4. Before clicking Deploy, manually enter the four Environment Variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`) into Vercel's Environment Variables settings array.
-5. Click **Deploy**.
+### 2. Install dependencies
+```bash
+npm install
+```
 
-## 6. AI Tools Section
-**Antigravity** was utilized for drafting, developing, and architecting this entire solution. It was chosen to rapidly bootstrap the Next.js infrastructure and cleanly construct repetitive schema tables, Next.js Middleware routing protections, robust server queries using the Supabase App Router SSR package, and design system aesthetics with Tailwind CSS. It dramatically accelerated development through automated dependency installations and generating functional E2E code in minutes.
+### 3. Environment Setup
+Create a `.env.local` file in the root directory and add your credentials:
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+GEMINI_API_KEY=your_google_gemini_api_key
+```
 
-## 7. Feature Logic Section
-- **Auth Flow**: Supabase Authentication handles users with Email/Password. Custom profiles are auto-injected into a public `users` table via Postgres SQL triggers upon sign-up. 
-- **Role-Based Access**: RoleGuard component acts as an intercept on the UI, checking a shared `UserContext`. A secure Next.js Edge Middleware route guards non-public endpoints.
-- **Post Creation & AI**: Image uploads bypass generic REST limits utilizing `supabase.storage`. The Google Gemini API is called upon generation to auto-summarize articles.
+### 4. Database Setup
+Execute the SQL found in `supabase-setup.sql` within your Supabase SQL Editor to initialize tables, triggers, and RLS policies.
 
-## 8. Cost Optimization Section
-The **Gemini `generateContent` API** request is strategically isolated into an API endpoint (`/api/generate-summary`). This executes _only_ once on initial post submission (via `CreatePost`). The 200-word response string is immediately recorded onto the `posts` Supabase PostgreSQL table. Edits updates only modify the core database rows—ensuring **ZERO** repeated/useless Gemini requests.
+### 5. Run the development server
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to see the result.
 
-## 9. Bug/Decision Section
-**Architectural Decision**: Passing Supabase relationships. Initial consideration was to maintain redundant names in records (denormalization), but for scalability and proper SQL principles, we chose to maintain `author_id` references heavily leveraging Supabase PostgREST nested querying structures e.g. `users(name)` from `createClient()`. This provides a single source of truth for all users.
+---
+
+## 📁 Project Structure
+
+```text
+├── app/               # Next.js App Router (Pages, API, Styles)
+├── components/        # Reusable React components (Navbar, PostCard, etc.)
+├── lib/               # Shared utilities (Supabase client, UserContext)
+├── public/            # Static assets
+└── supabase-setup.sql # Database schema and RLS policies
+```
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
+---
+
+*Built with ❤️ for the future of digital storytelling.*
