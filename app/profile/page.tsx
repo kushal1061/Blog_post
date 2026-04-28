@@ -24,6 +24,8 @@ export default function ProfilePage() {
       return
     }
 
+    const userId = user.id
+
     async function fetchUserPosts() {
       setLoading(true)
       const start = (page - 1) * pageSize
@@ -32,7 +34,7 @@ export default function ProfilePage() {
       const { data, count, error } = await supabase
         .from('posts')
         .select('*', { count: 'exact' })
-        .eq('author_id', user.id)
+        .eq('author_id', userId)
         .order('created_at', { ascending: false })
         .range(start, end)
 
